@@ -5,6 +5,7 @@
 
 # TODO support whole paths, not just plain filenames
 
+# runs the given function iff it is defined
 runif() { [[ `type -t $1` == function ]] && $1 ; }
 usage() { # {{{
 cat << EOF
