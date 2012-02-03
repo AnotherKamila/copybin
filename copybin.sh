@@ -5,6 +5,7 @@
 
 # TODO support whole paths, not just plain filenames
 
+runif() { [[ `type -t $1` == function ]] && $1 ; }
 usage() { # {{{
 cat << EOF
 usage: $0 options file(s)
@@ -130,6 +131,12 @@ process() { # {{{
 	rm -f $TMPNAME
 } # }}}
 
+runif beforeall
 for f in $@; do
+	runif beforefile $f
 	process "$f"
+	runif afterfile $f
 done
+runif afterall
+
+[[ -n $VERBOSE ]] && echo "Done."
