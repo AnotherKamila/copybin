@@ -30,6 +30,8 @@ HL_PROG="pygmentize -f html"
 # note: in the template, `!NAME' will be replaced with filename and
 # `!CONTENT' with file contents; otherwise just normal HTML with whatever you
 # want
+# (note: !CONTENT must be on a line by itself with no whitespace because I am
+# using awk to avoid problems in case of large files)
 TMPL="./assets/template.html"
 
 # functions to run before and after a file upload -- will be passed the filename
@@ -39,5 +41,5 @@ TMPL="./assets/template.html"
 # same as above, but run only once -- before and after processing all files
 #beforeall() {}
 afterall() {
-	rsync -tz ./assets $SERVER
+	rsync -trz ./assets $SERVER
 }

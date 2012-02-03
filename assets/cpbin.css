@@ -1,0 +1,111 @@
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section {
+	display: block;
+}
+html {
+	font-size: 100%;
+	-webkit-text-size-adjust: 100%;
+	overflow-y: scroll;
+	height: 100%;
+}
+body {
+	margin: 0;
+	padding: 0 0 1.4em 0;
+	min-height: 100%;
+	position: relative;
+}
+header {
+	background: #ddd;
+}
+header {
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	border-bottom: 1px dotted #ccc;
+}
+footer {
+	border-bottom: 1px dotted #ccc;
+}
+header .inner {
+	width: 90%;
+	margin: 0 auto;
+	padding: 0.8em 0;
+}
+header h1 {
+	display: inline;
+	margin: 0;
+	font-size: 1.8em;
+}
+header button {
+	display: block;
+	float: right;
+	border: 1px solid #aaa;
+	-moz-border-radius: 1000px;
+	-o-border-radius: 1000px;
+	-webkit-border-radius: 1000px;
+	border-radius: 1000px;
+	background: #eee;
+	background: -moz-linear-gradient(top, #eee 0%, #ccc 100%);
+	background: -o-linear-gradient(top, #eee 0%,#ccc 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eee), color-stop(100%,#ccc));
+	background: -webkit-linear-gradient(top, #eee 0%,#ccc 100%);
+	background: linear-gradient(top, #eee 0%,#ccc 100%);
+	padding: 0.5em 0.7em;
+	margin-left: 1em;
+}
+footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	color: #888;
+	text-shadow: 0 1px 0 #fff;
+}
+footer p {
+	padding: .6em;
+	margin: 0;
+	font-size: 0.7em;
+}
+footer a {
+	color: #777;
+	text-decoration: none;
+}
+footer a:hover {
+	text-decoration: underline;
+}
+#hl {
+	margin: 50px auto 150px auto;
+	padding: 1.5em 0;
+	width: 90%;
+	background: #f6f6f6;
+	border: 1px dotted #ccc;
+}
+#hl .line {
+	display: inline-block;
+	width: 100%;
+	padding: 0;
+	counter-increment: lines;
+}
+#hl .line .lineinner {
+	padding: 0 1.5em 0 0;
+}
+#hl .line:before {
+	display: inline-block;
+	margin-right: 1.2em;
+	width: 3em;
+	color: #ccc;
+	font-size: 0.8em;
+	content: counter(lines);
+	text-align: right;
+}
+#hl .line:nth-child(2n+1) {
+	background: #eee;
+}
+pre, code, kbd, samp {
+	font-family: 'Consolas', 'Courier New', monospace;
+	font-size: 1em;
+}
+pre {
+	margin: 0; padding: 0;
+	white-space: pre;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
