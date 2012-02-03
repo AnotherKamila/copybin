@@ -1,0 +1,23 @@
+# an example config file for copybin
+# uses bash syntax, so do whatever bash allows
+
+# where to upload, both server name and path -- will be passed to scp
+#SERVER="user@example.com:~/public_html/copybin/"
+SERVER="./generated"
+
+# default username and password for .htpasswd protection
+USER="someone"
+PASS="somethingsmart"
+
+# HTML creation settings
+# 
+# syntax highlighting program (needs to produce something that looks like HTML
+# on stdout)
+#HL_PROG="echo '<pre>'; cat; echo '</pre>'" # use this for no highlighting
+HL_PROG="pygmentize -f html"
+#
+# template location
+# note: in the template, `!NAME' will be replaced with filename and
+# `!CONTENT' with file contents; otherwise just normal HTML with whatever you
+# want
+TMPL="./template.html"
