@@ -3,18 +3,28 @@
 
 # where to upload, both server name and path -- will be passed to scp
 #SERVER="user@example.com:~/public_html/copybin/"
-SERVER="./generated"
+#SERVER="myhost:~/www/" # named hosts can be used too
+SERVER="./generated" # or local folders
 
-# default username and password for .htpasswd protection
-USER="someone"
-PASS="somethingsmart"
+# location of the used .htpasswd file (should be outside of the document root;
+# must be absolute for now)
+# note: it is not possible to set passwords if $SERVER is just a local
+# directory, because we can't ssh to a local directory obviously
+#HTPASSWD="~/.htpasswds/copybin"
+HTPASSWD="./.htpasswd-copybin"
 
 # HTML creation settings
 # 
 # syntax highlighting program (needs to produce something that looks like HTML
 # on stdout)
 #HL_PROG="echo '<pre>'; cat; echo '</pre>'" # use this for no highlighting
+# the following uses the file extension to choose the lexer, but fails if it is
+# unknown
 HL_PROG="pygmentize -f html"
+# the following attempts to guess the lexer based on file contents, but it is
+# not very reliable
+#HL_PROG="pygmentize -g -f html"
+# TODO fix this
 #
 # template location
 # note: in the template, `!NAME' will be replaced with filename and

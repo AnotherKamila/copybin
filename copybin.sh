@@ -13,15 +13,18 @@ Copy files using scp, creating neat pastebin-like HTML along the way
 
 OPTIONS/TODOs:
   -h		Shows this message
-  -p USER:PASS	password-protect the file with HTTP basic auth (.htpasswd)
+  -u USER:PASS	password-protect the file with HTTP basic auth (.htpasswd),
+		allowing only user USER with pw PASS to access it (a new user
+		is created in .htpasswd)
 		(not implemented yet)
-  -p USER	password-protect the file with HTTP basic auth (.htpasswd),
+  -u USER	password-protect the file with HTTP basic auth (.htpasswd),
 		USER must already be present in the existing .htpasswd file
 		(not implemented yet)
-  -d		password-protect the file with HTTP basic auth (.htpasswd),
-		using the default USER and PASS from the config file
-  -r		rebuild all HTML documents (use after changing templates)
-		(not implemented yet)
+  -a		password-protect the file with HTTP basic auth (.htpasswd),
+		using the 'Require valid-user' directive to allow all defined
+		users to access it
+  -s SERVER	specify the server string to be used with scp (ex.:
+		user@example.com:~/public_html/copybin/)
   -v		Verbose
 		(not implemented yet)
 EOF
@@ -34,7 +37,7 @@ check_config() { # {{{
 	[[ $VERBOSE ]] && echo "Using config from file: $CONFIG_FILE"
 } # }}}
 
-# defaults
+# defaults {{{
 if [[ -f "$COPYBIN_CONFIG_FILE" ]]; then
 	CONFIG_FILE="$COPYBIN_CONFIG_FILE"
 else
@@ -42,27 +45,24 @@ else
 fi
 
 . $CONFIG_FILE
+# }}}
 
-# options parsing
-while getopts ":hc:p:dsrv" OPTION; do
+# options parsing {{{
+while getopts ":hu:as:v" OPTION; do
 	case $OPTION in
 		h)
 			usage
 			exit 1
 			;;
-		p)
-			PASSWDPROTECT=1
-			USER=${OPTARG%:*}
+		u)
+			PASSWDPROTECT=1; USER=${OPTARG%:*}
 			if [[ $OPTARG == *:* ]]; then PASS=${OPTARG#*:}; else PASS=''; fi
 			;;
-		d)
-			PASSWDPROTECT=1
+		a)
+			PASSWDPROTECT=1; USER=''
 			;;
 		s)
-			[[ -n "$OPTARG" ]] && SERVER="$OPTARG"
-			;;
-		r)
-			echo "TODO"
+			SERVER="$OPTARG"
 			;;
 		v)
 			VERBOSE=1
@@ -73,12 +73,35 @@ while getopts ":hc:p:dsrv" OPTION; do
 			exit 1
 			;;
 	esac
-done
+done # }}}
 check_config
-
 shift $((OPTIND-1)) # leaves non-option arguments (i.e. files) in $@
 
-process() {
+htpasswd() { # {{{
+	USER=$1; PASS=$2;
+	# create .htaccess if it doesn't exist {{{
+read -d '' HTACCESSCONTENT << "EOF"
+AuthType Basic
+AuthName \"Copybin: Authorization required\"
+AuthUserFile \"$HTPASSWD\"
+EOF
+read -d '' CMD << EOF
+if [ ! -f ${SERVER#*:}/.htaccess ]; then 
+	echo "$HTACCESSCONTENT" > ${SERVER#*:}/.htaccess
+fi
+EOF
+	# }}}
+
+	if [[ -n $PASS ]]; then
+		CMD="$CMD; htpasswd -bc ${SERVER#*:}/$HTPASSWD $USER $PASS"
+	fi
+
+	ssh ${SERVER%:*} "$CMD"
+} # }}}
+htaccess() { # {{{
+ssh ${SERVER%:*} "[ -z \`grep $f ${SERVER#*:}/.htaccess\` ] && echo -e '<FilesMatch \"^$f(\.html)?$\">\n\tRequire $REQUIRE\n</FilesMatch>' >> ${SERVER#*:}/.htaccess"
+} # }}}
+process() { # {{{
 	f="$1"
 	if [[ "$f" == */* ]]; then
 		echo "$f: Supporting paths is a TODO. For now skipping."
@@ -92,10 +115,20 @@ process() {
 	scp "$f" "$SERVER/$f"
 	scp "$TMPNAME" "$SERVER/$f.html"
 
-	# TODO pw
+	if [[ -n $PASSWDPROTECT ]]; then
+		htpasswd $USER $PASS
+		if [[ -n "$USER" ]]; then
+			REQUIRE="user $USER"
+		else
+			REQUIRE='valid-user'
+		fi
+		htaccess $f $REQUIRE
+
+		[[ -n $VERBOSE ]] && echo "Protecting with Require $REQUIRE"
+	fi
 
 	rm -f $TMPNAME
-}
+} # }}}
 
 for f in $@; do
 	process "$f"
