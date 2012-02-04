@@ -1,19 +1,30 @@
 # an example config file for copybin
 # uses bash syntax, so do whatever bash allows
 
+# Destination
+# [required unless provided on the commandline]
+#
 # where to upload, both server name and path -- will be passed to scp
 #SERVER="user@example.com:~/public_html/copybin/"
 #SERVER="myhost:~/www/" # named hosts can be used too
 #SERVER="./generated" # or local folders
 SERVER="localhost:~/public_html/copybin" # or if you have sshd running...
 
+# Password-protection settings
+# [required if passwords will be used]
+#
+# .htaccess template to be used when no .htaccess file is found in the remote
+# folder
+HTACCESS_TMPL_FILENAME="`dirname $CONFIG_FILE`/copybin-htaccess.template"
+#
 # location of the used .htpasswd file (should be outside of the document root;
 # must be absolute for now)
 # note: it is not possible to set passwords if $SERVER is just a local
 # directory, because we can't ssh to a local directory obviously
-HTPASSWD="~/.htpasswds/copybin"
+HTPASSWD="$HOME/.htstuff/htpass-copybin"
 
 # HTML creation settings
+# [required]
 # 
 # syntax highlighting program (needs to produce something that looks like HTML
 # on stdout)
@@ -34,12 +45,13 @@ HL_PROG="pygmentize -f html"
 # using awk to avoid problems in case of large files)
 TMPL="./assets/template.html"
 
-# functions to run before and after a file upload -- will be passed the filename
-# as a parameter, and will have access to all variables defined here
+# Hooks
+#
+# these functions have access to all variables defined here, and in case of
+# {before,after}file will be given the current filename as a parameter
 #beforefile() {}
 #afterfile() {}
-# same as above, but run only once -- before and after processing all files
 #beforeall() {}
 afterall() {
-	rsync -trz ./assets $SERVER
+	rsync -trz ./assets $SERVER # a good idea
 }

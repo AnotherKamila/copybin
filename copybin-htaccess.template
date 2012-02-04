@@ -1,0 +1,6 @@
+# auth stuff
+AuthType Basic
+AuthName "Copybin: Authorization required"
+# AuthUserFile will be added by my script
+
+# vim: ft=apache
