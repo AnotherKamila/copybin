@@ -43,7 +43,7 @@ HL_PROG="pygmentize -f html"
 # want
 # (note: !CONTENT must be on a line by itself with no whitespace because I am
 # using awk to avoid problems in case of large files)
-TMPL="./assets/template.html"
+TMPL="./.assets/template.html"
 
 # Hooks
 #
@@ -53,5 +53,5 @@ TMPL="./assets/template.html"
 #afterfile() {}
 #beforeall() {}
 afterall() {
-	rsync -trz ./assets $SERVER # a good idea
+	rsync -trz ./.assets $SERVER # a good idea
 }
