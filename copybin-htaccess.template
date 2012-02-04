@@ -1,3 +1,8 @@
+# force download if the url has the form something?dl
+RewriteEngine On
+RewriteCond %{QUERY_STRING} dl
+RewriteRule ".*" - [T=application/octet-stream]
+
 # auth stuff
 AuthType Basic
 AuthName "Copybin: Authorization required"
